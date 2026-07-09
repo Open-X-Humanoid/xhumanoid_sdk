@@ -1,0 +1,7 @@
+# 灵巧手手势控制节点配置文件
+
+# 手的前缀: right_hand 或 left_hand
+hand_prefix: "right_hand"
+
+# 控制模式: 1=位置, 2=速度, 3=电流, 4=PWM, 5=位置+时间, 6=位置+速度
+control_mode: 1
