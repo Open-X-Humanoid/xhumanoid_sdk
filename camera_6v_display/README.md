@@ -37,7 +37,7 @@
 ## 目录结构
 
 ```
-8.camera_6v_display/
+camera_6v_display/
 ├── README.md
 ├── python/                              # Python版本 (包名: camera_6v_display_py)
 │   ├── package.xml

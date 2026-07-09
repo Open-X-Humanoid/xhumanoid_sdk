@@ -29,7 +29,7 @@
 ## 目录结构
 
 ```
-2.brainco_hand_gesture_control/
+brainco_hand_gesture_control/
 ├── README.md
 ├── brainco_hand_gesture_interfaces/      # 服务消息定义包
 │   ├── CMakeLists.txt

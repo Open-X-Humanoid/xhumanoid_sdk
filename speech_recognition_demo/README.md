@@ -87,7 +87,7 @@ ros2 topic echo /lyre/voice_activity
 ## 目录结构
 
 ```
-4.speech_recognition_demo/
+speech_recognition_demo/
 ├── README.md
 ├── python/                              # Python版本 (speech_recognition_demo_py)
 │   ├── package.xml

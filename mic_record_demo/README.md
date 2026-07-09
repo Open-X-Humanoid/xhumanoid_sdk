@@ -37,7 +37,7 @@
 ## 目录结构
 
 ```
-10.mic_record_demo/
+mic_record_demo/
 ├── README.md
 ├── python/                              # Python版本 (包名: mic_record_demo_py)
 │   ├── package.xml
@@ -212,6 +212,6 @@ ros2 service call /lyre/audio_control lyre_msgs/srv/AudioControl "{enable: false
 
 ## 相关链接
 
-- 音频播放示例：`9.speaker_play_demo`
-- 语音识别示例：`4.speech_recognition_demo`
+- 音频播放示例：`speaker_play_demo`
+- 语音识别示例：`speech_recognition_demo`
 - 音频消息定义：`lyre_msgs`

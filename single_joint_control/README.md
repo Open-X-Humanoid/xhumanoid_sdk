@@ -132,7 +132,7 @@ ros2 topic pub --once /arm/cmd ros2_bridge_msgs/msg/ArmCtrl "{
 ## 目录结构
 
 ```
-1.single_joint_control/
+single_joint_control/
 ├── README.md
 ├── python/                              # Python版本 (single_joint_control_py)
 │   ├── package.xml

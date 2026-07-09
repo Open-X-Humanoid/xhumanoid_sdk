@@ -2,6 +2,16 @@
 
 面向 **具身天工 3.0** 人形机器人平台的开源 SDK 示例集，基于 ROS 2 Jazzy 构建。
 
+> **开发平台**：本项目需要在 **具身天工 3.0 机器人本体** 上进行开发和运行，开发环境为 **Ubuntu 24.04**，当前不支持 Mac 和 Windows。
+>
+> ```bash
+> # 登录算力主机（通过网线直连时需配置本机41网段网卡 MTU 为 9000）
+> ssh nvidia@192.168.41.2
+> 
+> # 加载 ROS2 工作空间
+> source ~/xos/setup.bash
+> ```
+
 ## 简介
 
 本仓库提供一系列开箱即用的 ROS 2 示例包，演示具身天工 3.0 机器人 SDK 的核心能力，涵盖关节控制、传感器数据可视化、语音交互等。每个示例均提供 **Python** 和 **C++** 双版本实现，可独立编译和运行。
@@ -31,6 +41,9 @@
 ### 获取代码
 
 ```bash
+# 登录具身天工 3.0 开发板
+ssh nvidia@192.168.41.2
+
 # 克隆仓库到机器人工作空间的 src 目录下
 cd ~/xos/src
 git clone https://github.com/Open-X-Humanoid/xhumanoid_sdk.git
@@ -66,20 +79,20 @@ ros2 launch single_joint_control_cpp single_joint_control.launch.py
 
 ## 示例列表
 
-| 编号 | 示例 | 说明 | 硬件要求 |
-|------|------|------|----------|
-| 1 | [single_joint_control](1.single_joint_control/) | 单关节位置 & 力位混合控制 | 标配 |
-| 2 | [brainco_hand_gesture_control](2.brainco_hand_gesture_control/) | 强脑灵巧手手势控制 | 选配 |
-| 3 | [play_text_demo](3.play_text_demo/) | 文字转语音播放 | 标配 |
-| 4 | [speech_recognition_demo](4.speech_recognition_demo/) | 语音识别（ASR） | 标配 |
-| 5 | [point_cloud_display](5.point_cloud_display/) | Livox 激光雷达点云可视化 | 标配 |
-| 6 | [imu_display](6.imu_display/) | 多源 IMU 数据显示与绘图 | 标配 |
-| 7 | [gps_data_display](7.gps_data_display/) | GPS 数据采集与记录 | 选配 |
-| 8 | [camera_6v_display](8.camera_6v_display/) | 6 路相机全景可视化 | 选配 |
-| 9 | [speaker_play_demo](9.speaker_play_demo/) | 喇叭音频播放 | 标配 |
-| 10 | [mic_record_demo](10.mic_record_demo/) | 麦克风录音 | 标配 |
-| 11 | [camera_display](11.camera_display/) | 头部 & 腰部相机 RGB/深度显示 | 标配 |
-| 12 | [brainco_hand_touch_display](12.brainco_hand_touch_display/) | 强脑手触觉反馈显示 | 选配 |
+| 示例 | 说明 | 硬件要求 |
+|------|------|----------|
+| [single_joint_control](single_joint_control/) | 单关节位置 & 力位混合控制 | 标配 |
+| [brainco_hand_gesture_control](brainco_hand_gesture_control/) | 强脑灵巧手手势控制 | 选配 |
+| [play_text_demo](play_text_demo/) | 文字转语音播放 | 标配 |
+| [speech_recognition_demo](speech_recognition_demo/) | 语音识别（ASR） | 标配 |
+| [point_cloud_display](point_cloud_display/) | Livox 激光雷达点云可视化 | 标配 |
+| [imu_display](imu_display/) | 多源 IMU 数据显示与绘图 | 标配 |
+| [gps_data_display](gps_data_display/) | GPS 数据采集与记录 | 选配 |
+| [camera_6v_display](camera_6v_display/) | 6 路相机全景可视化 | 选配 |
+| [speaker_play_demo](speaker_play_demo/) | 喇叭音频播放 | 标配 |
+| [mic_record_demo](mic_record_demo/) | 麦克风录音 | 标配 |
+| [camera_display](camera_display/) | 头部 & 腰部相机 RGB/深度显示 | 标配 |
+| [brainco_hand_touch_display](brainco_hand_touch_display/) | 强脑手触觉反馈显示 | 选配 |
 
 > **选配** 示例需要额外硬件支持，部分机型可能未配备。
 
@@ -92,21 +105,21 @@ xhumanoid_sdk/
 ├── README.md                           # 本文件
 ├── LICENSE                             # Apache-2.0
 ├── CONTRIBUTING.md                     # 贡献指南
-├── 1.single_joint_control/             # 关节控制示例
+├── single_joint_control/               # 关节控制示例
 │   ├── python/                         # Python ROS 2 包
 │   ├── cpp/                            # C++ ROS 2 包
 │   └── README.md
-├── 2.brainco_hand_gesture_control/     # 灵巧手手势控制（选配）
-├── 3.play_text_demo/                   # 文字转语音示例
-├── 4.speech_recognition_demo/          # 语音识别示例
-├── 5.point_cloud_display/              # 点云显示示例
-├── 6.imu_display/                      # IMU 显示示例
-├── 7.gps_data_display/                 # GPS 数据示例（选配）
-├── 8.camera_6v_display/                # 6 路相机示例（选配）
-├── 9.speaker_play_demo/                # 喇叭播放示例
-├── 10.mic_record_demo/                 # 麦克风录音示例
-├── 11.camera_display/                  # 头部 & 腰部相机示例
-└── 12.brainco_hand_touch_display/      # 触觉反馈示例（选配）
+├── brainco_hand_gesture_control/       # 灵巧手手势控制（选配）
+├── play_text_demo/                     # 文字转语音示例
+├── speech_recognition_demo/            # 语音识别示例
+├── point_cloud_display/                # 点云显示示例
+├── imu_display/                        # IMU 显示示例
+├── gps_data_display/                   # GPS 数据示例（选配）
+├── camera_6v_display/                  # 6 路相机示例（选配）
+├── speaker_play_demo/                  # 喇叭播放示例
+├── mic_record_demo/                    # 麦克风录音示例
+├── camera_display/                     # 头部 & 腰部相机示例
+└── brainco_hand_touch_display/         # 触觉反馈示例（选配）
 ```
 
 各示例统一遵循以下目录规范：

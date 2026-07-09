@@ -42,7 +42,7 @@
 ## 目录结构
 
 ```
-12.brainco_hand_touch_display/
+brainco_hand_touch_display/
 ├── README.md
 ├── python/                                      # Python版本
 │   ├── package.xml

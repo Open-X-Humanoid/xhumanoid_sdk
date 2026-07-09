@@ -37,7 +37,7 @@
 ## 目录结构
 
 ```
-5.point_cloud_display/
+point_cloud_display/
 ├── README.md
 ├── python/                              # Python版本 (point_cloud_display_py)
 │   ├── package.xml

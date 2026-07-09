@@ -181,7 +181,7 @@ ros2 launch imu_display_py imu_display.launch.py \
 ## 目录结构
 
 ```
-6.imu_display/
+imu_display/
 ├── README.md
 ├── python/                              # Python版本 (imu_display_py)
 │   ├── package.xml
@@ -223,7 +223,7 @@ ros2 launch imu_display_py imu_display.launch.py \
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # 创建虚拟环境
-cd ~/xos/src/example/sdk_demo/6.imu_display/python
+cd ~/xos/src/example/sdk_demo/imu_display/python
 uv venv
 uv pip install matplotlib "numpy>=1.21.0,<2.0.0" pyyaml
 

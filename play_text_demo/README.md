@@ -137,7 +137,7 @@ string status   # cmd=query 时返回："idle" / "playing" / "none"
 ## 目录结构
 
 ```
-3.play_text_demo/
+play_text_demo/
 ├── README.md
 ├── python/                              # Python版本 (play_text_demo_py)
 │   ├── package.xml

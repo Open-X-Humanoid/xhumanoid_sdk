@@ -36,7 +36,7 @@
 ## 目录结构
 
 ```
-9.speaker_play_demo/
+speaker_play_demo/
 ├── README.md
 ├── python/                              # Python版本 (包名: speaker_play_demo_py)
 │   ├── package.xml

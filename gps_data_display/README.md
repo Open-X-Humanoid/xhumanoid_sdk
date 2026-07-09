@@ -40,7 +40,7 @@
 ## 目录结构
 
 ```
-7.gps_data_display/
+gps_data_display/
 ├── README.md
 ├── python/                              # Python版本 (gps_data_display_py)
 │   ├── package.xml
