@@ -1,3 +1,10 @@
+<p align="center">
+  <a href="https://opensource.x-humanoid-cloud.com/plugin.php?id=keke_video_base&ac=course&cid=20">
+    <img src="./static/tiangong-sdk-introduction.png" width="700">
+  </a>
+
+</p >
+
 # 具身天工 3.0 SDK 示例
 
 面向 **具身天工 3.0** 人形机器人平台的开源 SDK 示例集，基于 ROS 2 Jazzy 构建。
