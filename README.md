@@ -1,4 +1,4 @@
-<p align="center">
+<p>
   <a href="https://opensource.x-humanoid-cloud.com/plugin.php?id=keke_video_base&ac=course&cid=20">
     <img src="./static/course-tiangong-sdk-banner.png" width="700">
   </a>
