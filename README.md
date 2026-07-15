@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://opensource.x-humanoid-cloud.com/plugin.php?id=keke_video_base&ac=course&cid=20">
-    <img src="./static/tiangong-sdk-introduction.png" width="700">
+    <img src="./static/course-tiangong-sdk-banner.png" width="700">
   </a>
 
 </p >
