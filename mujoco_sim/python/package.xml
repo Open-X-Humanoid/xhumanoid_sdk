@@ -3,12 +3,13 @@
 <package format="3">
   <name>xhumanoid_mujoco_sim</name>
   <version>0.0.0</version>
-  <description>MuJoCo simulator exposing the xhumanoid_sdk /arm/cmd and /robot_state interface</description>
+  <description>MuJoCo simulators exposing the xhumanoid_sdk robot and dexterous hand interfaces</description>
   <maintainer email="ryan.liu@x-humanoid.com">ryan</maintainer>
   <license>Apache-2.0</license>
 
   <depend>rclpy</depend>
   <depend>ros2_bridge_msgs</depend>
+  <depend>brainco_hand_msgs</depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>

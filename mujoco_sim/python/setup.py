@@ -18,12 +18,13 @@ setup(
     zip_safe=True,
     maintainer='ryan',
     maintainer_email='ryan.liu@x-humanoid.com',
-    description='MuJoCo simulator exposing the xhumanoid_sdk /arm/cmd and /robot_state interface',
+    description='MuJoCo simulators exposing the xhumanoid_sdk robot and dexterous hand interfaces',
     license='Apache-2.0',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
             'sim_node = xhumanoid_mujoco_sim.sim_node:main',
+            'hand_sim_node = xhumanoid_mujoco_sim.hand_sim_node:main',
         ],
     },
 )
