@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 # Run INSIDE the container (docker/run.sh mujoco_sim/scripts/smoke_test.sh).
-# Builds the packages, then runs two checks against the simulators:
-#   1. single_joint_control_py on the robot simulator (sim.launch.py)
-#   2. brainco_hand_gesture_control and brainco_hand_touch_display on the
-#      hand simulator (hand_sim.launch.py)
-# Passes when both succeed. HAND_IMPL=cpp runs the C++ hand examples instead of
+# Builds the packages, then runs three checks against the simulator
+# (sim.launch.py, robot with a hand on each wrist):
+#   1. single_joint_control_py
+#   2. brainco_hand_gesture_control and brainco_hand_touch_display
+#   3. the browser viewer answers over HTTP and websocket
+# Passes when all succeed. HAND_IMPL=cpp runs the C++ hand examples instead of
 # the Python ones (default: py).
 set -eo pipefail
 
@@ -64,8 +65,9 @@ fi
 echo "single_joint_control: PASSED"
 
 # ---- 2. dexterous hand: gesture control + touch display --------------------
-ros2 launch xhumanoid_mujoco_sim hand_sim.launch.py > "${LOG_DIR}/hand_sim.log" 2>&1 &
-PIDS+=($!)
+ros2 launch xhumanoid_mujoco_sim sim.launch.py > "${LOG_DIR}/hand_sim.log" 2>&1 &
+HAND_SIM_PID=$!
+PIDS+=("${HAND_SIM_PID}")
 ros2 launch "brainco_hand_gesture_control_${HAND_IMPL}" hand_gesture_control.launch.py \
   > "${LOG_DIR}/gesture.log" 2>&1 &
 PIDS+=($!)
@@ -86,6 +88,18 @@ if grep -q "Normal(N)" "${LOG_DIR}/touch_display.log"; then
   echo "touch_display: table printed"
 else
   echo "SMOKE TEST FAILED (touch_display), last output:"; tail -20 "${LOG_DIR}/touch_display.log"
+  exit 1
+fi
+kill "${HAND_SIM_PID}" 2>/dev/null || true
+
+# ---- 3. browser viewer -----------------------------------------------------
+ros2 launch xhumanoid_mujoco_sim sim.launch.py viewer_port:=8080 > "${LOG_DIR}/viewer_sim.log" 2>&1 &
+PIDS+=($!)
+if timeout 60 python3 "${SRC}/mujoco_sim/scripts/check_viewer.py" 8080 > "${LOG_DIR}/viewer_check.log" 2>&1; then
+  cat "${LOG_DIR}/viewer_check.log"
+else
+  cat "${LOG_DIR}/viewer_check.log"
+  echo "SMOKE TEST FAILED (viewer), viewer_sim.log:"; tail -15 "${LOG_DIR}/viewer_sim.log"
   exit 1
 fi
 echo "SMOKE TEST PASSED"

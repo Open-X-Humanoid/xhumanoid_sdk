@@ -11,6 +11,10 @@ Supported ArmCtrl modes: 0 (position) and 1 (force-position hybrid).
 Mode 0 is approximated: the setpoint moves towards `pos` at `spd` rad/s and
 is tracked by a PD law using the gains of the model's position actuators.
 `cur` is ignored because the model has no motor current model.
+
+Unless `with_hands` is false, a simplified dexterous hand is attached to each
+wrist and served on the BrainCo topics (see hand_interface.py). With
+`viewer_port` > 0 the scene is also streamed to a browser (see viewer.py).
 """
 
 import math
@@ -25,6 +29,10 @@ from rclpy.node import Node
 from ros2_bridge_msgs.msg import (
     ArmCtrl, ImuStatus, MotorStatus, MotorStatusGroup, RobotState,
 )
+
+from xhumanoid_mujoco_sim.hand_interface import Hand, HandPorts
+from xhumanoid_mujoco_sim.hand_model import POS_MAX, POS_MIN
+from xhumanoid_mujoco_sim.scene import HAND_MOUNTS, build_scene
 
 # Motor id -> MJCF joint name (xSIM_MUJOCO 'full' config for tiangong3).
 MOTOR_ID_TO_JOINT = {
@@ -51,17 +59,6 @@ MODE_POSITION = 0
 MODE_HYBRID = 1
 
 
-def load_model(path: str, fix_base: bool) -> mujoco.MjModel:
-    """Load the MJCF, optionally welding the pelvis to the world."""
-    if not fix_base:
-        return mujoco.MjModel.from_xml_path(path)
-    spec = mujoco.MjSpec.from_file(path)
-    pelvis = spec.body('pelvis')
-    for joint in list(pelvis.joints):
-        spec.delete(joint)
-    return spec.compile()
-
-
 class JointCommand:
     """Last command received for one joint."""
 
@@ -85,6 +82,11 @@ class SimNode(Node):
         self.declare_parameter('fix_base', True)
         self.declare_parameter('state_rate_hz', 100.0)
         self.declare_parameter('realtime_factor', 1.0)
+        self.declare_parameter('with_hands', True)
+        self.declare_parameter('hand_full_stroke_s', 0.8)
+        self.declare_parameter('viewer_port', int(
+            os.environ.get('XHUMANOID_SIM_VIEWER_PORT', '0') or 0))
+        self.declare_parameter('viewer_host', '0.0.0.0')
 
         model_path = self.get_parameter('model_path').value
         if not model_path or not os.path.isfile(model_path):
@@ -93,11 +95,26 @@ class SimNode(Node):
                 'mujoco_sim/scripts/fetch_model.sh and set the model_path '
                 'parameter or XHUMANOID_SIM_MODEL.')
         self.fix_base = bool(self.get_parameter('fix_base').value)
-        self.model = load_model(model_path, self.fix_base)
+        hand_names = (list(HAND_MOUNTS)
+                      if self.get_parameter('with_hands').value else [])
+        self.model = build_scene(model_path, self.fix_base, hand_names)
         self.data = mujoco.MjData(self.model)
         mujoco.mj_forward(self.model, self.data)
 
         self._index_model()
+        self.hand_max_rate = ((POS_MAX - POS_MIN)
+                              / float(self.get_parameter(
+                                  'hand_full_stroke_s').value))
+        self.hands = [Hand(n, self.model, self.data) for n in hand_names]
+        self.hand_ports = [HandPorts(self, h) for h in self.hands]
+        self.viewer = None
+        viewer_port = int(self.get_parameter('viewer_port').value)
+        if viewer_port > 0:
+            from xhumanoid_mujoco_sim.viewer import SceneViewer
+            host = str(self.get_parameter('viewer_host').value)
+            self.viewer = SceneViewer(self.model, host, viewer_port)
+            self.get_logger().info(
+                f'Browser viewer listening on {host}:{viewer_port}')
         self.commands = {
             jid: JointCommand(0.0) for jid in MOTOR_ID_TO_JOINT
             if self.joint_ids[jid] >= 0
@@ -189,6 +206,8 @@ class SimNode(Node):
                 kp, kv = self.pd_gains[mid]
                 torque = kp * (cmd.setpoint - q) - kv * dq
             d.ctrl[self.motor_act[mid]] = torque  # clipped to ctrlrange by MuJoCo
+        for hand in self.hands:
+            hand.update_ctrl(dt, self.hand_max_rate)
 
     def on_tick(self):
         now = time.monotonic()
@@ -201,6 +220,10 @@ class SimNode(Node):
             mujoco.mj_step(self.model, self.data)
         self.sim_steps += n_steps
         self.publish_state()
+        for ports in self.hand_ports:
+            ports.publish()
+        if self.viewer is not None:
+            self.viewer.push(self.data)
 
     def publish_state(self):
         d = self.data
@@ -250,6 +273,8 @@ def main(args=None):
     except KeyboardInterrupt:
         pass
     finally:
+        if node.viewer is not None:
+            node.viewer.close()
         node.destroy_node()
         if rclpy.ok():
             rclpy.shutdown()

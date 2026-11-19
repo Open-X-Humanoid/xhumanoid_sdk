@@ -43,5 +43,10 @@ RUN if [ -n "${UBUNTU_MIRROR}" ]; then \
  && pip3 install --no-cache-dir "mujoco==${MUJOCO_VERSION}" \
  && rm -rf /var/lib/apt/lists/*
 
+# Browser viewer (optional at run time, see README): rendering happens in the
+# browser, so the container needs no display or GPU.
+ARG VISER_VERSION=1.1.1
+RUN pip3 install --no-cache-dir "viser==${VISER_VERSION}"
+
 WORKDIR /ws
 CMD ["bash"]

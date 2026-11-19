@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """Check the hand simulator through brainco_hand_gesture_control.
 
-Run inside the sim container with the simulator (hand_sim.launch.py) and
+Run inside the sim container with the simulator (sim.launch.py) and
 brainco_hand_gesture_control_py already running. For each gesture it calls the
 /gesture_command service and checks the finger positions reported on
 /right_hand/motor_status and the touch readings on /right_hand/touch_status.

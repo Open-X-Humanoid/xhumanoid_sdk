@@ -6,8 +6,11 @@ Revo model. Motor order follows the xhumanoid_sdk hand examples:
 
 Every motor is a position actuator whose joint angle is a linear function of
 the protocol value 1 (open) .. 1000 (closed). The distal joints of a finger
-follow its first joint through an equality constraint. A fixed bar sits under
-the palm, so closing the fingers produces contact and touch readings.
+follow its first joint through an equality constraint.
+
+Hand frame: x along the fingers, z normal to the palm, fingers curl towards
+-z, and the thumb sits at y = +0.05 (right hand) or y = -0.05 (left hand).
+The model is attached to the robot by xhumanoid_mujoco_sim.scene.
 """
 
 # Protocol range of the SDK examples.
@@ -21,6 +24,25 @@ FINGERS = ['index', 'middle', 'ring', 'pinky']
 FINGER_Y = {'index': 0.030, 'middle': 0.010, 'ring': -0.010, 'pinky': -0.030}
 FINGER_LEN = {'index': (0.040, 0.030, 0.025), 'middle': (0.044, 0.032, 0.026),
               'ring': (0.040, 0.030, 0.025), 'pinky': (0.032, 0.024, 0.020)}
+
+# Collision bits: hand geoms collide with each other and with the test bar,
+# never with the robot (whose geoms use bit 1).
+HAND_CONTYPE = 2
+
+# Test bar for the touch sensors: a cylinder along the hand's y axis, below
+# the palm. Its pose in the hand frame (euler 90 deg about x gives the y axis).
+BAR_POS = (0.065, 0.0, -0.04)
+BAR_SIZE = (0.02, 0.07)           # radius, half length
+BAR_QUAT = (0.70710678, 0.70710678, 0.0, 0.0)
+
+# The tiangong3 MJCF disables actuator groups 0, 1 and 3 and drives the joints
+# with group 2. The hand actuators must be in an enabled group.
+ACTUATOR_GROUP = 2
+
+# Actuator and sensor names, in motor order.
+ACTUATORS = ['thumb_flex', 'thumb_rotate', 'index', 'middle', 'ring', 'pinky']
+TOUCH_SENSORS = ['touch_thumb', 'touch_index', 'touch_middle', 'touch_ring',
+                 'touch_pinky']
 
 
 def _finger(name: str, side: float) -> str:
@@ -49,16 +71,15 @@ def build_hand_mjcf(side: float = 1.0) -> str:
     return f"""
 <mujoco model="brainco_hand_sim">
   <compiler angle="radian"/>
-  <option timestep="0.001" integrator="implicitfast"/>
   <default>
     <joint damping="0.002" armature="0.0005"/>
-    <geom contype="1" conaffinity="1" friction="1 0.005 0.0001" rgba="0.8 0.8 0.85 1"/>
+    <geom contype="{HAND_CONTYPE}" conaffinity="{HAND_CONTYPE}" group="1"
+          friction="1 0.005 0.0001" rgba="0.95 0.75 0.3 1"/>
   </default>
   <worldbody>
+   <body name="hand">
     <geom name="palm" type="box" size="0.04 0.045 0.012" pos="0.04 0 0"
           contype="0" conaffinity="0"/>
-    <geom name="bar" type="cylinder" size="0.02 0.07" pos="0.065 0 -0.04"
-          euler="1.5708 0 0"/>
     {fingers}
     <body name="thumb_0" pos="0.02 {0.05 * side} 0">
       <joint name="thumb_rot" axis="{-side} 0 0" range="0 {MOTOR_RANGE[1]}"/>
@@ -73,6 +94,7 @@ def build_hand_mjcf(side: float = 1.0) -> str:
         </body>
       </body>
     </body>
+   </body>
   </worldbody>
   <equality>
     {''.join(f'''
@@ -81,10 +103,10 @@ def build_hand_mjcf(side: float = 1.0) -> str:
     <joint joint1="thumb_j2" joint2="thumb_j1" polycoef="0 0.8 0 0 0"/>
   </equality>
   <actuator>
-    <position name="thumb_flex" joint="thumb_j1" kp="2" kv="0.05" forcerange="-0.25 0.25" ctrlrange="0 {MOTOR_RANGE[0]}"/>
-    <position name="thumb_rotate" joint="thumb_rot" kp="2" kv="0.05" forcerange="-0.25 0.25" ctrlrange="0 {MOTOR_RANGE[1]}"/>
+    <position name="thumb_flex" joint="thumb_j1" group="{ACTUATOR_GROUP}" kp="2" kv="0.05" forcerange="-0.25 0.25" ctrlrange="0 {MOTOR_RANGE[0]}"/>
+    <position name="thumb_rotate" joint="thumb_rot" group="{ACTUATOR_GROUP}" kp="2" kv="0.05" forcerange="-0.25 0.25" ctrlrange="0 {MOTOR_RANGE[1]}"/>
     {''.join(f'''
-    <position name="{n}" joint="{n}_j1" kp="2" kv="0.05" forcerange="-0.25 0.25" ctrlrange="0 {MOTOR_RANGE[2]}"/>''' for n in FINGERS)}
+    <position name="{n}" joint="{n}_j1" group="{ACTUATOR_GROUP}" kp="2" kv="0.05" forcerange="-0.25 0.25" ctrlrange="0 {MOTOR_RANGE[2]}"/>''' for n in FINGERS)}
   </actuator>
   <sensor>
     <touch name="touch_thumb" site="thumb_tip"/>

@@ -24,7 +24,6 @@ setup(
     entry_points={
         'console_scripts': [
             'sim_node = xhumanoid_mujoco_sim.sim_node:main',
-            'hand_sim_node = xhumanoid_mujoco_sim.hand_sim_node:main',
         ],
     },
 )
