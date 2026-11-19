@@ -155,7 +155,7 @@ xhumanoid_sdk/
 ## 路线图
 
 - [ ] 增加多关节、全身控制示例
-- [ ] 增加仿真环境支持（Gazebo / Isaac Sim）
+- [ ] 增加仿真环境支持（Gazebo / Isaac Sim）。已提供 MuJoCo 无头仿真，见 [mujoco_sim](mujoco_sim/README.md)
 - [ ] 提供 Docker 开发环境
 - [ ] 增加单元测试和集成测试
 - [ ] 配置 CI/CD 流水线
